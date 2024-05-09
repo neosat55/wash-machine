@@ -1,0 +1,18 @@
+version: '3.9'
+name: wachmachine-service
+services:
+  postgres:
+    image: postgres:latest
+    ports:
+      - 5432:5432
+    volumes:
+      - type: volume
+        source: postgres-volume-data
+        target: /var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_USER=admin
+      - POSTGRES_DB=wach-machine
+volumes:
+  pulsar-volume-data:
+  postgres-volume-data:
