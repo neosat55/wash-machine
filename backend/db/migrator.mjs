@@ -4,12 +4,6 @@ import process from 'node:process';
 import { promises as fs } from 'fs'
 import path from 'path';
 
-try {
-  process.loadEnvFile("./.env");
-} catch (exception) {
-  console.log(exception);
-}
-
 const dialect = new PostgresDialect({
   pool: new pg.Pool({
     connectionTimeoutMillis: 1000,
