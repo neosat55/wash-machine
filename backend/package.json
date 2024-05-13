@@ -5,9 +5,8 @@
   "author": "",
   "private": true,
   "license": "UNLICENSED",
-  "type": "module",
   "scripts": {
-    "db:migrate": "node --env-file=.env db/migrator.mjs",
+    "db:migrate": "node --experimental-modules --env-file=.env db/migrator.mjs",
     "db:gen": "kysely-codegen --out-file src/infrastructure/persistence/database/schema/database.schema.ts --dialect postgres",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
