@@ -1,3 +1,4 @@
+begin;
 insert into roles(label, name)
 values ('Администратор', 'admin'),
        ('Пользователь', 'user'),
@@ -9,7 +10,7 @@ insert into boxes(name)
 values ('Чил зона'),
        ('Заходим не стесняемся');
 
-insert into services(name, duration, price)
+insert into packages(name, duration, price)
 values ('Комплеск мойка', 120, 900),
        ('Полировка кузова', 5, 180);
 
@@ -41,4 +42,5 @@ values ((select (u -> 'admin')::jsonb::integer from users where u -> 'admin' is 
 
 insert into boxes_masters(box_id, user_id)
 values ((select id from boxes order by id limit 1),
-        (select id from users where username = 'worker'))
+        (select id from users where username = 'worker'));
+commit;

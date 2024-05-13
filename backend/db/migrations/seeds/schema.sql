@@ -32,8 +32,6 @@ create table if not exists "boxes_masters"
     user_id integer
 );
 
-drop table boxes_queue;
-
 CREATE TABLE if not exists "boxes_queue"
 (
     "box_num"    integer unique,
@@ -68,18 +66,14 @@ CREATE TABLE if not exists "orders"
     "status"         varchar
 );
 
-drop table orders;
-
-CREATE TABLE if not exists "orders_services"
+CREATE TABLE if not exists "orders_packages"
 (
     "id"          integer PRIMARY KEY GENERATED always as IDENTITY,
-    "service_ids"  integer[],
+    "package_ids"  integer[],
     "order_id"    integer,
     "total_time"  integer,
     "total_price" integer
 );
-
-drop table orders_packages
 
 -- ALTER TABLE "users_roles" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id");
 --
