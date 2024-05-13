@@ -5,7 +5,9 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 try {
   process.loadEnvFile("./.env");
-} catch (exception) {}
+} catch (exception) {
+  console.log(`Cannot read env: `, exception);
+}
 
 const PORT = process.env.PORT || 8080;
 
