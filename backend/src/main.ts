@@ -10,6 +10,7 @@ try {
 }
 
 const PORT = process.env.PORT || 8080;
+const HOST = process.env.HOST || 'localhost';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -21,7 +22,7 @@ async function bootstrap() {
       .setTitle('WachMachine API docs')
       .setVersion('1.0')
       .addBearerAuth()
-      .addServer(`http://localhost:${PORT}`)
+      .addServer(`http://${HOST}:${PORT}`)
       .build();
 
     const document = SwaggerModule.createDocument(app, config);
@@ -30,7 +31,7 @@ async function bootstrap() {
   }
 
   await app.listen(PORT, () => {
-    console.log(`http://localhost:${PORT}`);
+    console.log(`http://${HOST}:${PORT}`);
   });
 }
 bootstrap();
