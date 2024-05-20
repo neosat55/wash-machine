@@ -4,7 +4,7 @@ import * as process from 'node:process';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 try {
-  process.loadEnvFile("./.env");
+  process.loadEnvFile('./.env');
 } catch (exception) {
   console.log(`Cannot read env: `, exception);
 }
@@ -16,6 +16,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   app.enableCors();
+  app.setGlobalPrefix('api');
 
   if (process.env.SWAGGER === 'true') {
     const config = new DocumentBuilder()

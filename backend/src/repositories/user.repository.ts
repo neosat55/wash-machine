@@ -1,8 +1,8 @@
-import { Kysely } from 'kysely';
+import { Kysely, sql } from 'kysely';
 import { DB, Users } from '../infrastructure/persistence/database/schema/database.schema';
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientName } from '../infrastructure/persistence/client.database';
-import { UpdateUserDto } from '../users/entities/user.dto';
+import { GetUsersListDto, UpdateUserDto } from '../users/entities/user.dto';
 import { RolesEnum } from '../types';
 
 @Injectable()
@@ -115,5 +115,25 @@ export class UserRepository {
       .where('role_id', '=', roleRow.id)
       .returning('id')
       .executeTakeFirst();
+  }
+
+  getUsersList(filters: GetUsersListDto['filters']) {
+    let query = this.client.selectFrom('users')
+      .innerJoin('users_roles', 'users_roles.user_id', 'users.id')
+      .innerJoin('roles', 'roles.id', 'users_roles.role_id')
+      .select(sql`json_agg(row_to_json(roles))`.as('roles'))
+      .selectAll('users')
+      .groupBy('users.id')
+
+
+    if (filters?.roles?.length) {
+      query = query.where('roles.id', 'in', filters.roles);
+    }
+
+    return query.execute();
+  }
+
+  getRoles() {
+    return this.client.selectFrom('roles').execute();
   }
 }

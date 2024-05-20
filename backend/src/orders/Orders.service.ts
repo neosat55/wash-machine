@@ -1,30 +1,34 @@
 import { Injectable } from '@nestjs/common';
-import { CreateOrderDto } from './entities/orders.dto';
+import { CreateOrderDto, LoadAllDto } from './entities/orders.dto';
 import { OrderRepository } from '../repositories/order.repository';
 import { Order } from './entities/order.model';
 import { OrderStatus } from '../types';
 import { PackageRepository } from '../repositories/package.repository';
+import { BoxRepository } from '../repositories/box.repository';
 
 @Injectable()
 export class OrdersService {
   constructor(
     private readonly orderRepository: OrderRepository,
     private readonly serviceRepository: PackageRepository,
-  ) {
-  }
+    private readonly boxesRepository: BoxRepository,
+  ) {}
 
   async createOrder(userId: number, body: CreateOrderDto) {
-    const servicesTotal = await this.serviceRepository.getPackagesTotalData(body.packages);
+    const servicesTotal = await this.serviceRepository.getPackagesTotalData(
+      body.packages,
+    );
 
     const order = new Order({
-      box_num: body.box_num,
       user_id: userId,
       status: OrderStatus.CREATED,
       start_at: body.start_at,
       packages: body.packages,
       total_time: servicesTotal.total_time,
-      total_price: servicesTotal.total_price
+      total_price: servicesTotal.total_price,
     });
+
+    order.box_num = await this.boxesRepository.findBestBox(order);
 
     return this.orderRepository.createOrder(order);
   }
@@ -33,8 +37,8 @@ export class OrdersService {
     return this.orderRepository.getOrderStatus(id);
   }
 
-  cancelOrder(id: number) {
-    return this.orderRepository.cancelOrder(id);
+  changeOrderStatus(id: number, orderStatus: OrderStatus) {
+    return this.orderRepository.changeOrderStatus(id, orderStatus);
   }
 
   completeOrder(id: number) {
@@ -49,7 +53,21 @@ export class OrdersService {
     return Promise.resolve(undefined);
   }
 
-  countInProgressOrderByBoxNum(id: number) {
-    return this.orderRepository.countOrdersByBoxNum(id);
+  getBoxesQueueForCurrentDay() {
+    return this.orderRepository.getBoxesQueueForCurrentDay();
+  }
+
+  async loadCurrentOrders(id: number) {
+    const orders = await this.orderRepository.getCurrentOrders(id);
+
+    return orders;
+  }
+
+  async loadAllInProgress() {
+    return this.orderRepository.loadAllInProgress();
+  }
+
+  async loadAll(body: LoadAllDto) {
+    return this.orderRepository.loadAll(body);
   }
 }

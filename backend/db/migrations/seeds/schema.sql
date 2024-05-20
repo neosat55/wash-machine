@@ -75,6 +75,13 @@ CREATE TABLE if not exists "orders_packages"
     "total_price" integer
 );
 
+create table if not exists "bonuses"
+(
+    "user_id" integer,
+    "amount" integer,
+    "meta" json
+)
+
 -- ALTER TABLE "users_roles" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id");
 --
 -- ALTER TABLE "roles" ADD FOREIGN KEY ("id") REFERENCES "users_roles" ("role_id");

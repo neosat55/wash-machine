@@ -12,8 +12,7 @@ export class BoxesService {
     private readonly boxRepo: BoxRepository,
     private readonly orderService: OrdersService,
     private readonly userRepo: UserRepository,
-  ) {
-  }
+  ) {}
 
   getBoxes() {
     return this.boxRepo.getBoxes();
@@ -31,10 +30,12 @@ export class BoxesService {
       return null;
     }
 
-    const users = await this.userRepo.findUsersByIds(masters.map(m => m.user_id));
+    const users = await this.userRepo.findUsersByIds(
+      masters.map((m) => m.user_id),
+    );
 
     return new BoxModel({
-      masters: users.map(u => new UserModel(u)),
+      masters: users.map((u) => new UserModel(u)),
       id: box.id,
       name: box.name,
     });
@@ -56,8 +57,8 @@ export class BoxesService {
     return this.boxRepo.addBoxMaster(box_id, master_id);
   }
 
-  async getBoxQueue(id: number) {
-    const { queue } = await this.orderService.countInProgressOrderByBoxNum(id);
+  async getBoxesQueue() {
+    const { queue } = await this.orderService.getBoxesQueueForCurrentDay();
     return Number(queue);
   }
 }

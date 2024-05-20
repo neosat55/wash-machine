@@ -1,15 +1,24 @@
-'use client';
+"use client";
 
-import { PropsWithChildren } from 'react';
-import { NextUIProvider } from '@nextui-org/react';
-import { useRouter } from 'next/navigation';
+import { PropsWithChildren } from "react";
+import { NextUIProvider } from "@nextui-org/react";
+import { useRouter } from "next/navigation";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-export const BaseLayout = ({children}: PropsWithChildren) => {
+const client = new QueryClient();
+
+export const BaseLayout = ({ children }: PropsWithChildren) => {
   const router = useRouter();
 
   return (
-    <NextUIProvider className={'h-full w-full'} navigate={router.push}>
-      {children}
-    </NextUIProvider>
-  )
-}
+    <QueryClientProvider client={client}>
+      <NextUIProvider
+        locale={"ru-RU"}
+        className={"h-full w-full"}
+        navigate={router.push}
+      >
+        {children}
+      </NextUIProvider>
+    </QueryClientProvider>
+  );
+};

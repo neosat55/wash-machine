@@ -5,6 +5,7 @@ import { DatabaseModule } from './infrastructure/persistence/database.module';
 import { OrdersModule } from './orders/orders.module';
 import { BoxesModule } from './boxes/boxes.module';
 import { BonusSystemModule } from './bonus-system';
+import { PackageModule } from './packages';
 
 @Module({
   imports: [
@@ -13,8 +14,8 @@ import { BonusSystemModule } from './bonus-system';
     OrdersModule,
     BoxesModule,
     BonusSystemModule,
+    PackageModule,
     DatabaseModule.forRoot(),
   ],
 })
-export class AppModule {
-}
+export class AppModule {}

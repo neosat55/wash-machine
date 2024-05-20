@@ -9,9 +9,6 @@ const config: Config = {
     "./node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    // colors: {
-    //   'bg-dark': '#023e8a'
-    // },
     screens: {
       'sm': '640px',
       // => @media (min-width: 640px) { ... }

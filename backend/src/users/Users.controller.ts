@@ -1,16 +1,25 @@
-import { Body, Controller, Delete, Param, Put, Query, Req } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  Query,
+  Req,
+} from '@nestjs/common';
 import { UsersService } from './Users.service';
-import { IRequest, RolesEnum } from '../types';
+import { IRequest, Result, RolesEnum } from '../types';
 import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
-import { UpdateUserDto } from './entities/user.dto';
+import { GetUsersListDto, UpdateUserDto } from './entities/user.dto';
 import { Roles } from '../infrastructure/auth/roles.decorator';
 
 @ApiTags('Users')
 @Controller('user')
 @ApiBearerAuth()
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {
-  }
+  constructor(private readonly usersService: UsersService) {}
 
   @Delete('delete-profile')
   @Roles([RolesEnum.USER, RolesEnum.ADMIN])
@@ -27,14 +36,32 @@ export class UsersController {
   @Put('/give-role/:id')
   @Roles([RolesEnum.ADMIN])
   @ApiQuery({ enum: RolesEnum, name: 'role', required: true })
-  async giveUserRole(@Param('id') userId: number, @Query('role') role: RolesEnum) {
+  async giveUserRole(
+    @Param('id') userId: number,
+    @Query('role') role: RolesEnum,
+  ) {
     return this.usersService.giveUserRole(userId, role);
   }
 
   @Put('/revoke-role/:id')
   @Roles([RolesEnum.ADMIN])
   @ApiQuery({ enum: RolesEnum, name: 'role', required: true })
-  async revokeUserRole(@Param('id') userId: number, @Query('role') role: RolesEnum) {
+  async revokeUserRole(
+    @Param('id') userId: number,
+    @Query('role') role: RolesEnum,
+  ) {
     return this.usersService.revokeUserRole(userId, role);
+  }
+
+  @Post('users-list')
+  @Roles([RolesEnum.ADMIN])
+  async getUsersList(@Body() body: GetUsersListDto) {
+    return Result.Ok(await this.usersService.getUsersList(body));
+  }
+
+  @Get('roles')
+  @Roles([RolesEnum.ADMIN])
+  async getRoles() {
+    return Result.Ok(await this.usersService.roles());
   }
 }

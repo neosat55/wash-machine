@@ -1,30 +1,24 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Sse } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  Sse,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Public } from '../infrastructure/auth/public.decorator';
 import { Roles } from '../infrastructure/auth/roles.decorator';
-import { RolesEnum } from '../types';
+import { Result, RolesEnum } from '../types';
 import { BoxesService } from './Boxes.service';
 import { AddBoxDto, AddBoxMasterDto, UpdateBoxDto } from './entities/box.dto';
-
-class Result {
-  constructor(data: object) {
-    Object.assign(this, data);
-  }
-
-  static Ok(data: any) {
-    return new Result({ success: true, data });
-  }
-
-  static Error(data: any, error: Error) {
-    return new Result({ success: false, data, error });
-  }
-}
 
 @Controller('boxes')
 @ApiTags('Boxes')
 export class BoxesController {
-  constructor(private readonly boxesService: BoxesService) {
-  }
+  constructor(private readonly boxesService: BoxesService) {}
 
   @Get('')
   @Public()
@@ -44,10 +38,10 @@ export class BoxesController {
     return Result.Ok(await this.boxesService.getBoxMasters(id));
   }
 
-  @Get('/queue/:id')
+  @Get('/queue')
   @Public()
-  async getBoxQueue(@Param('id') id: number) {
-    return Result.Ok(await this.boxesService.getBoxQueue(id));
+  async getBoxQueue() {
+    return Result.Ok(await this.boxesService.getBoxesQueue());
   }
 
   @Post('/add-new')
@@ -75,6 +69,8 @@ export class BoxesController {
   @Roles([RolesEnum.ADMIN])
   @ApiBearerAuth()
   async addMasterToBox(@Body() body: AddBoxMasterDto) {
-    return Result.Ok(await this.boxesService.addBoxMaster(body.box_id, body.user_id));
+    return Result.Ok(
+      await this.boxesService.addBoxMaster(body.box_id, body.user_id),
+    );
   }
 }

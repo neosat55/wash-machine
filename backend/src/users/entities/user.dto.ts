@@ -10,3 +10,13 @@ export class UpdateUserDto {
   @ApiPropertyOptional()
   email: string;
 }
+
+export class Filters {
+  @ApiPropertyOptional({type: Number, isArray: true})
+  roles: number[];
+}
+
+export class GetUsersListDto {
+  @ApiPropertyOptional()
+  filters: Filters;
+}

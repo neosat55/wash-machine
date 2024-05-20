@@ -2,7 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { UserRepository } from '../repositories/user.repository';
 import { UserModel } from './entities/User.model';
 import { RolesEnum } from '../types';
-import { UpdateUserDto } from './entities/user.dto';
+import { GetUsersListDto, UpdateUserDto } from './entities/user.dto';
+import * as _ from 'lodash';
 
 @Injectable()
 export class UsersService {
@@ -30,5 +31,15 @@ export class UsersService {
 
   revokeUserRole(userId: number, role: RolesEnum) {
     return this.userRepository.revokeRoleFromUser(userId, role);
+  }
+
+  async getUsersList(body: GetUsersListDto) {
+    const usersList = await this.userRepository.getUsersList(body.filters);
+
+    return usersList.map(u => _.omit(u, 'password'))
+  }
+
+  async roles() {
+    return this.userRepository.getRoles();
   }
 }

@@ -18,6 +18,12 @@ export type JsonValue = JsonArray | JsonObject | JsonPrimitive;
 
 export type Timestamp = ColumnType<Date, Date | string, Date | string>;
 
+export interface Bonuses {
+  amount: number | null;
+  meta: Json | null;
+  user_id: number | null;
+}
+
 export interface Boxes {
   id: Generated<number>;
   name: string | null;
@@ -47,7 +53,7 @@ export interface Orders {
 }
 
 export interface OrdersPackages {
-  id: number;
+  id: Generated<number>;
   order_id: number | null;
   package_ids: number[] | null;
   total_price: number | null;
@@ -86,6 +92,7 @@ export interface UsersRoles {
 }
 
 export interface DB {
+  bonuses: Bonuses;
   boxes: Boxes;
   boxes_masters: BoxesMasters;
   boxes_queue: BoxesQueue;
