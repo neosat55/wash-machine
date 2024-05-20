@@ -18,21 +18,15 @@ import {
   DropdownMenu,
   DropdownItem,
 } from "@nextui-org/react";
-import { OrderDto, UserListDto } from "@/shared/types";
+import { UserListDto } from "@/shared/types";
 import React, { useCallback, useMemo, useState } from "react";
-import { Chip } from "@nextui-org/chip";
-import { format } from "date-fns";
 
-import { humanTime, toLocalTime } from "@/shared/lib/dates";
-import { PackagesList } from "@/app/components/entities/packages-list";
-import { statusMap } from "@/shared/lib/statusMap";
 import { useGetPackages } from "@/shared/model/packages";
-import { useMap } from "usehooks-ts";
 import { setToArray } from "@/shared/lib/sets";
-import { useGetRoles, useGetUsersList } from "@/shared/model/user";
+import { useGetUsersList } from "@/shared/model/user";
 import { RolesList } from "@/app/components/entities/roles-list";
 
-export const VerticalDotsIcon = ({
+const VerticalDotsIcon = ({
   size = 24,
   width,
   height,
@@ -180,7 +174,7 @@ export const UsersTable = () => {
         />
       </div>
     );
-  }, [page]);
+  }, [page, pages]);
 
   return (
     <Table

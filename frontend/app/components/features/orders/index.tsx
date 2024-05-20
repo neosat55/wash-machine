@@ -10,7 +10,7 @@ export const Orders = () => {
 
   return (
     <div className={"w-full flex flex-wrap gap-3"}>
-      {orders?.data.map((o) => <Order order={o} />)}
+      {orders?.data.map((o) => <Order key={o.id} order={o} />)}
     </div>
   );
 };

@@ -150,7 +150,7 @@ export const TotalTable = () => {
         </div>
       </div>
     );
-  }, [orders?.data.length, packages?.data, filters]);
+  }, [orders?.data.length, packages?.data, filters, filtersActions]);
 
   const bottomContent = useMemo(() => {
     return (
@@ -182,7 +182,7 @@ export const TotalTable = () => {
         />
       </div>
     );
-  }, [page, orders?.data]);
+  }, [page, pages, orders?.data]);
 
   return (
     <Table

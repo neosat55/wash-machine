@@ -27,7 +27,7 @@ import { toLocalTime } from "@/shared/lib/dates";
 import { PackagesList } from "@/app/components/entities/packages-list";
 import { statusMap } from '@/shared/lib/statusMap';
 
-export const VerticalDotsIcon = ({
+const VerticalDotsIcon = ({
   size = 24,
   width,
   height,
