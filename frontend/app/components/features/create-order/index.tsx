@@ -83,7 +83,7 @@ const OrderForm = ({ form, actions }: any) => {
           </SelectItem>
         )}
       </Select>
-      {bonuses?.data.amount ? (
+      {bonuses?.data?.amount ? (
         <Checkbox
           isSelected={form.get("use_bonuses")}
           onValueChange={(v) => actions.set("use_bonuses", v)}
@@ -96,7 +96,7 @@ const OrderForm = ({ form, actions }: any) => {
         <div className={"flex flex-col gap-2"}>
           <Price
             useBonuses={form.get("use_bonuses")}
-            bonusAmount={bonuses?.data.amount || 0}
+            bonusAmount={bonuses?.data?.amount || 0}
             price={total?.data.total_price}
           />
           <span>Общее время - {humanTime(Number(total?.data.total_time))}</span>
