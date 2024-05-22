@@ -47,6 +47,7 @@ export class AuthService {
       first_name: body.firstName,
       last_name: body.lastName,
       phone: body.phone,
+      meta: {}
     });
 
     return user;

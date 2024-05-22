@@ -64,4 +64,9 @@ export class UsersController {
   async getRoles() {
     return Result.Ok(await this.usersService.roles());
   }
+
+  @Get('get-user-bonuses')
+  async getBonuses(@Req() req: IRequest) {
+    return Result.Ok(await this.usersService.getUserBonuses(req.user.id));
+  }
 }

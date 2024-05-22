@@ -5,6 +5,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/shared/model/user";
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function AuthPage() {
   const [username, setUsername] = useState("");
@@ -26,7 +27,7 @@ export default function AuthPage() {
 
   return (
     <div className={"flex flex-col w-full h-full items-center justify-center"}>
-      <h1 className={""}>Wash Machine</h1>
+      <Image src={'/logo.png'} alt={'Logo'} width={150} height={150} />
 
       <div className={"flex flex-col sm:w-2/3 lg:w-1/3 md:w-2/4 gap-2"}>
         {auth.isError && (

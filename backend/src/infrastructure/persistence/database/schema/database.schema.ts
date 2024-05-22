@@ -80,6 +80,7 @@ export interface Users {
   first_name: string | null;
   id: Generated<number>;
   last_name: string | null;
+  meta: Json | null;
   password: string | null;
   phone: string | null;
   username: string | null;

@@ -35,7 +35,7 @@ const config: Config = {
   },
   darkMode: "class",
   plugins: [nextui({
-    defaultTheme: 'dark',
+    defaultTheme: 'light',
   })],
 };
 export default config;

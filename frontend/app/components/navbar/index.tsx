@@ -19,7 +19,8 @@ import Link from "next/link";
 import { useGetProfile, useToken } from "@/shared/model/user";
 import { useHasRole } from "@/shared/lib/useHasRole";
 import { UserRole } from "@/shared/types";
-import { usePathname } from 'next/navigation';
+import { usePathname } from "next/navigation";
+import Image from "next/image";
 
 const Profile = () => {
   const { data } = useGetProfile();
@@ -66,19 +67,21 @@ export const WashMachineNavbar = () => {
   const hasRole = useHasRole();
   const pathname = usePathname();
 
-  const menuItems: { href: string; title: string; role: UserRole["name"][] }[] = [
-    { href: "/home/admin", title: "Админ панель", role: ["admin"] },
-    {
-      href: "/home/worker",
-      title: "Текущие Заказы",
-      role: ["admin", "worker"],
-    },
-    {
-      href: "/home/user",
-      title: "Мои заказы",
-      role: ["admin", "worker", "user"],
-    },
-  ];
+  const menuItems: { href: string; title: string; role: UserRole["name"][] }[] =
+    [
+      { href: "/home", title: "Главная", role: ["admin", "worker", "user"] },
+      { href: "/home/admin", title: "Админ панель", role: ["admin"] },
+      {
+        href: "/home/worker",
+        title: "Текущие Заказы",
+        role: ["admin", "worker"],
+      },
+      {
+        href: "/home/user",
+        title: "Мои заказы",
+        role: ["admin", "worker", "user"],
+      },
+    ];
 
   return (
     <Navbar onMenuOpenChange={setIsMenuOpen}>
@@ -88,7 +91,7 @@ export const WashMachineNavbar = () => {
           className="sm:hidden"
         />
         <NavbarBrand as={Link} href="/home">
-          <p className="font-bold text-inherit">WashMachine</p>
+          <Image src={"/logo.png"} alt={"Logo"} width={100} height={100} />
         </NavbarBrand>
       </NavbarContent>
 
@@ -96,7 +99,10 @@ export const WashMachineNavbar = () => {
         {menuItems
           .filter((it) => hasRole(it.role))
           .map((item, index) => (
-            <NavbarMenuItem key={`${item}-${index}`} isActive={pathname === item.href}>
+            <NavbarMenuItem
+              key={`${item}-${index}`}
+              isActive={pathname === item.href}
+            >
               <Link
                 color={
                   index === 2

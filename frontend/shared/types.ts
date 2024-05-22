@@ -52,6 +52,7 @@ export interface Package {
 export interface CreateOrder {
   start_at: string;
   packages: number[];
+  use_bonuses?: boolean;
 }
 
 export interface OrderDto {

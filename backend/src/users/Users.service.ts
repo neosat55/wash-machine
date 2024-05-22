@@ -42,4 +42,8 @@ export class UsersService {
   async roles() {
     return this.userRepository.getRoles();
   }
+
+  async getUserBonuses(id: number) {
+    return this.userRepository.getUserBonuses(id);
+  }
 }

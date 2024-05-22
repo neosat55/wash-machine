@@ -4,5 +4,5 @@ import { ApiTags } from '@nestjs/swagger';
 @Controller('bonus-system')
 @ApiTags('bonus-system')
 export class BonusSystemController {
-
+  // async
 }

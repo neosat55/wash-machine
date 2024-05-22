@@ -1,5 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { auth, getRoles, getUsersList, profile, register } from '@/shared/api';
+import {
+  auth,
+  getRoles,
+  getUserBonuses,
+  getUsersList,
+  profile,
+  register,
+} from "@/shared/api";
 import { AuthBody, RegisterBody } from "@/shared/types";
 import { useLocalStorage } from "usehooks-ts";
 
@@ -64,4 +71,11 @@ export const useGetRoles = () => {
     queryKey: [{ key: "users-roles" }],
     queryFn: () => getRoles(),
   });
-}
+};
+
+export const useGetBonuses = () => {
+  return useQuery({
+    queryFn: () => getUserBonuses(),
+    queryKey: [{ key: "user-bonuses" }],
+  });
+};

@@ -146,7 +146,10 @@ export class OrderRepository {
         'orders_packages.total_time',
       ])
       .selectAll('orders')
-      .where('orders.status', 'not in', [OrderStatus.COMPLETED, OrderStatus.CANCELLED])
+      .where('orders.status', 'not in', [
+        OrderStatus.COMPLETED,
+        OrderStatus.CANCELLED,
+      ])
       .orderBy('start_at', 'asc')
       .execute();
   }
@@ -187,5 +190,13 @@ export class OrderRepository {
     }
 
     return query.execute();
+  }
+
+  getUserIdByOrderId(id: number) {
+    return this.client
+      .selectFrom('orders')
+      .where('orders.id', '=', id)
+      .select('user_id')
+      .executeTakeFirst();
   }
 }

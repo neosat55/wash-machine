@@ -6,6 +6,10 @@ export class CreateOrderDto {
   start_at: Date;
   @ApiProperty()
   packages: number[];
+  @ApiPropertyOptional()
+  use_bonuses: boolean;
+  @ApiPropertyOptional()
+  car_number: string;
 }
 
 export class Filters {

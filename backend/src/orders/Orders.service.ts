@@ -5,6 +5,7 @@ import { Order } from './entities/order.model';
 import { OrderStatus } from '../types';
 import { PackageRepository } from '../repositories/package.repository';
 import { BoxRepository } from '../repositories/box.repository';
+import { BonusSystemRepository } from '../repositories/bonus-system.repository';
 
 @Injectable()
 export class OrdersService {
@@ -12,6 +13,7 @@ export class OrdersService {
     private readonly orderRepository: OrderRepository,
     private readonly serviceRepository: PackageRepository,
     private readonly boxesRepository: BoxRepository,
+    private readonly bonusesRepository: BonusSystemRepository,
   ) {}
 
   async createOrder(userId: number, body: CreateOrderDto) {
@@ -28,46 +30,68 @@ export class OrdersService {
       total_price: servicesTotal.total_price,
     });
 
+    let bonusAmount = 0;
+
+    if (body.use_bonuses) {
+      const bonuses =
+        await this.bonusesRepository.getUserBonusesByUserId(userId);
+
+      bonusAmount = bonuses.amount;
+      if (order.total_price - bonusAmount < 0) {
+        bonusAmount = order.total_price;
+        order.total_price = 0;
+      } else {
+        order.total_price -= bonusAmount;
+      }
+    }
+
     order.box_num = await this.boxesRepository.findBestBox(order);
 
-    return this.orderRepository.createOrder(order);
+    const createdOrder = await this.orderRepository.createOrder(order);
+
+    if (createdOrder && body.use_bonuses) {
+      await this.bonusesRepository.chargeBonuses(userId, bonusAmount);
+    }
+
+    return order;
   }
 
   getOrderStatus(id: number) {
     return this.orderRepository.getOrderStatus(id);
   }
 
-  changeOrderStatus(id: number, orderStatus: OrderStatus) {
-    return this.orderRepository.changeOrderStatus(id, orderStatus);
-  }
+  async changeOrderStatus(id: number, orderStatus: OrderStatus) {
+    const isSuccess = await this.orderRepository.changeOrderStatus(
+      id,
+      orderStatus,
+    );
 
-  completeOrder(id: number) {
-    return this.orderRepository.completeOrder(id);
+    if (isSuccess && orderStatus === OrderStatus.COMPLETED) {
+      const { user_id } = await this.orderRepository.getUserIdByOrderId(id);
+
+      await this.bonusesRepository.addBonusToUser(user_id);
+    }
+
+    return isSuccess;
   }
 
   getOrdersHistory(userId: number) {
     return this.orderRepository.getOrdersHistory(userId);
   }
 
-  createGuestOrder(body: CreateOrderDto) {
-    return Promise.resolve(undefined);
-  }
-
   getBoxesQueueForCurrentDay() {
     return this.orderRepository.getBoxesQueueForCurrentDay();
   }
 
-  async loadCurrentOrders(id: number) {
-    const orders = await this.orderRepository.getCurrentOrders(id);
-
-    return orders;
+  loadCurrentOrders(id: number) {
+    return this.orderRepository.getCurrentOrders(id);
   }
 
-  async loadAllInProgress() {
+  loadAllInProgress() {
     return this.orderRepository.loadAllInProgress();
   }
 
-  async loadAll(body: LoadAllDto) {
+  loadAll(body: LoadAllDto) {
     return this.orderRepository.loadAll(body);
   }
 }

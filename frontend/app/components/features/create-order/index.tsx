@@ -1,5 +1,6 @@
 import {
   Button,
+  Checkbox,
   DateInput,
   Input,
   Modal,
@@ -11,20 +12,38 @@ import {
   SelectItem,
   useDisclosure,
 } from "@nextui-org/react";
-import { useState } from "react";
 import { useGetPackages, useGetPackagesInfo } from "@/shared/model/packages";
-import { formatDuration, minutesToHours } from "date-fns";
-import { ru } from "date-fns/locale";
 import { useMap } from "usehooks-ts";
 import { useCreateOrder } from "@/shared/model/orders";
-import { humanTime } from '@/shared/lib/dates';
+import { humanTime } from "@/shared/lib/dates";
+import { useGetBonuses } from "@/shared/model/user";
 
 const toNumberArray = (set: Set<any>) => {
   return [...set.entries()].map((e) => Number(e[0]));
 };
 
+const Price = ({ useBonuses, bonusAmount, price }: any) => {
+  if (useBonuses) {
+    let newPrice = price - bonusAmount
+
+    if (newPrice < 0) {
+      newPrice = 0;
+    }
+
+    return (
+      <span>
+        Цена - <span className={"line-through"}>{price}Р</span>
+        <span> {newPrice}Р</span>
+      </span>
+    );
+  }
+
+  return <span>Цена - {price}Р</span>;
+};
+
 const OrderForm = ({ form, actions }: any) => {
   const { data: packages, isLoading } = useGetPackages();
+  const { data: bonuses } = useGetBonuses();
   const { data: total } = useGetPackagesInfo(
     toNumberArray(form.get("packages") || new Set([])),
   );
@@ -64,9 +83,22 @@ const OrderForm = ({ form, actions }: any) => {
           </SelectItem>
         )}
       </Select>
+      {bonuses?.data.amount ? (
+        <Checkbox
+          isSelected={form.get("use_bonuses")}
+          onValueChange={(v) => actions.set("use_bonuses", v)}
+          title={`У вас есть {bonuses.data.amount} бонусов. Хотите использовать?`}
+        >
+          У вас есть {bonuses.data.amount} бонусов. Хотите использовать?
+        </Checkbox>
+      ) : null}
       {form.get("packages")?.size > 0 && (
         <div className={"flex flex-col gap-2"}>
-          <span>Цена - {total?.data.total_price}Р</span>
+          <Price
+            useBonuses={form.get("use_bonuses")}
+            bonusAmount={bonuses?.data.amount || 0}
+            price={total?.data.total_price}
+          />
           <span>Общее время - {humanTime(Number(total?.data.total_time))}</span>
         </div>
       )}
@@ -84,12 +116,14 @@ export const CreateOrder = () => {
       car_number: form.get("car_number"),
       start_at: form.get("start_at").toDate(),
       packages: toNumberArray(form.get("packages")),
+      use_bonuses: form.get("use_bonuses"),
     };
 
     createOrder.mutate(
       {
         packages: body.packages,
         start_at: body.start_at,
+        use_bonuses: body.use_bonuses,
       },
       {
         onSuccess: onClose,
@@ -98,7 +132,7 @@ export const CreateOrder = () => {
   };
 
   return (
-    <div className={'p-2'}>
+    <div className={"p-2"}>
       <Button color={"primary"} onPress={onOpen} isIconOnly={true}>
         +
       </Button>
