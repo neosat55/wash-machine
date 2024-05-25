@@ -42,11 +42,12 @@ export interface Result<T> {
   data: T;
 }
 
-export interface Package {
+export interface PackageDto {
   id: number;
   name: string;
   duration: number;
   price: number;
+  deleted: true | null;
 }
 
 export interface CreateOrder {
@@ -71,13 +72,19 @@ export interface OrderDto {
 }
 
 export interface UserListDto {
-  roles: Role[]
-  id: number
-  username: string
-  first_name: string
-  last_name: string
-  email: string
-  phone: any
-  discount: any
-  created_at: string
+  roles: Role[];
+  id: number;
+  username: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone: any;
+  discount: any;
+  created_at: string;
+}
+
+export interface CarDto {
+  id: number;
+  user_id: number;
+  car_number: string;
 }

@@ -41,6 +41,12 @@ export interface BoxesQueue {
   status: string | null;
 }
 
+export interface Garage {
+  car_number: string | null;
+  id: Generated<number>;
+  user_id: number | null;
+}
+
 export interface Orders {
   box_num: number | null;
   id: Generated<number>;
@@ -61,6 +67,7 @@ export interface OrdersPackages {
 }
 
 export interface Packages {
+  deleted: boolean | null;
   duration: number | null;
   id: Generated<number>;
   name: string | null;
@@ -97,6 +104,7 @@ export interface DB {
   boxes: Boxes;
   boxes_masters: BoxesMasters;
   boxes_queue: BoxesQueue;
+  garage: Garage;
   orders: Orders;
   orders_packages: OrdersPackages;
   packages: Packages;

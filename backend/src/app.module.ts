@@ -6,6 +6,7 @@ import { OrdersModule } from './orders/orders.module';
 import { BoxesModule } from './boxes/boxes.module';
 import { BonusSystemModule } from './bonus-system';
 import { PackageModule } from './packages';
+import { GarageModule } from './garage/garage.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { PackageModule } from './packages';
     BoxesModule,
     BonusSystemModule,
     PackageModule,
+    GarageModule,
     DatabaseModule.forRoot(),
   ],
 })

@@ -12,11 +12,15 @@ import {
   SelectItem,
   useDisclosure,
 } from "@nextui-org/react";
-import { useGetPackages, useGetPackagesInfo } from "@/shared/model/packages";
+import {
+  useGetPackages,
+  useGetPackagesForCreateOrder,
+  useGetPackagesInfo,
+} from "@/shared/model/packages";
 import { useMap } from "usehooks-ts";
 import { useCreateOrder } from "@/shared/model/orders";
 import { humanTime } from "@/shared/lib/dates";
-import { useGetBonuses } from "@/shared/model/user";
+import { useGetBonuses, useGetCars } from "@/shared/model/user";
 
 const toNumberArray = (set: Set<any>) => {
   return [...set.entries()].map((e) => Number(e[0]));
@@ -24,7 +28,7 @@ const toNumberArray = (set: Set<any>) => {
 
 const Price = ({ useBonuses, bonusAmount, price }: any) => {
   if (useBonuses) {
-    let newPrice = price - bonusAmount
+    let newPrice = price - bonusAmount;
 
     if (newPrice < 0) {
       newPrice = 0;
@@ -42,20 +46,33 @@ const Price = ({ useBonuses, bonusAmount, price }: any) => {
 };
 
 const OrderForm = ({ form, actions }: any) => {
-  const { data: packages, isLoading } = useGetPackages();
+  const { data: packages, isLoading } = useGetPackagesForCreateOrder();
   const { data: bonuses } = useGetBonuses();
   const { data: total } = useGetPackagesInfo(
     toNumberArray(form.get("packages") || new Set([])),
   );
+  const { data: cars, isLoading: isCarsLoading } = useGetCars();
 
   return (
     <>
-      <Input
-        value={form.get("car_number")}
-        onValueChange={(v) => actions.set("car_number", v)}
+      <Select
+        isLoading={isCarsLoading}
+        items={cars?.data || []}
         isRequired={true}
-        label={"Номер машины"}
-      />
+        selectionMode={"single"}
+        label={"Машина"}
+        selectedKeys={form.get("cars")}
+        onSelectionChange={(k) => actions.set("cars", k)}
+      >
+        {(item) => (
+          <SelectItem
+            key={item.id}
+            value={item.id}
+          >
+            {item.car_number}
+          </SelectItem>
+        )}
+      </Select>
       <DateInput
         value={form.get("start_at")}
         onChange={(v) => actions.set("start_at", v)}
