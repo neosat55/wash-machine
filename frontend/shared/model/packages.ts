@@ -35,7 +35,7 @@ export const useCreatePackage = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (vars: any) => createPackage({ body: vars }),
+    mutationFn: (vars: object) => createPackage({ body: vars }),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["packages"],

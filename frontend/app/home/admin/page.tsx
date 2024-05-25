@@ -14,17 +14,11 @@ export default function AdminPage() {
         <Tab className={"w-full"} title={"Общий отчёт"}>
           <TotalTable />
         </Tab>
-        <Tab className={'w-full'} title={"Отчёт по месяцам"}>
-          <MonthTable />
-        </Tab>
         <Tab className={"w-full"} title={"Пользователи"}>
           <UsersTable />
         </Tab>
         <Tab className={'w-full'} title={"Услуги"}>
           <PackagesTable />
-        </Tab>
-        <Tab title={"Боксы"}>
-          <BoxesTable />
         </Tab>
       </Tabs>
     </div>

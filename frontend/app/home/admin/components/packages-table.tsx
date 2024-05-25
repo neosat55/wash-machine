@@ -1,4 +1,5 @@
 import {
+  useCreatePackage,
   useDeletePackage,
   useGetPackages,
   useUpdatePackage,
@@ -9,16 +10,25 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
+  Input,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
   Table,
   TableBody,
   TableCell,
   TableColumn,
   TableHeader,
   TableRow,
+  useDisclosure,
 } from "@nextui-org/react";
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { PackageDto } from "@/shared/types";
 import { humanTime } from "@/shared/lib/dates";
+import { useMap } from "usehooks-ts";
+import { useForm } from "@/shared/lib/useForm";
 
 export const VerticalDotsIcon = ({
   size = 24,
@@ -43,20 +53,41 @@ export const VerticalDotsIcon = ({
   </svg>
 );
 
-const EditModal = () => {};
-
 const Actions = ({ item }: { item: PackageDto }) => {
   const deletePackage = useDeletePackage();
   const updatePackage = useUpdatePackage();
+  const [currKey, setCurrKey] = useState<keyof typeof modals>();
 
   const handleDropDown = (k: string) => {
-    if (k === "delete") {
-      deletePackage.mutate({ id: item.id });
+    switch (k) {
+      case "delete": {
+        deletePackage.mutate({ id: item.id });
+        break;
+      }
+      case "restore": {
+        updatePackage.mutate({ id: item.id, updatee: { deleted: null } });
+        break;
+      }
+      case "edit": {
+        onOpen()
+        setCurrKey("edit");
+        break;
+      }
+      default: {
+      }
     }
+  };
 
-    if (k === "restore") {
-      updatePackage.mutate({ id: item.id, updatee: { deleted: null } });
-    }
+  const { isOpen, onClose, onOpenChange, onOpen } = useDisclosure();
+  const modals = {
+    edit: () => (
+      <EditPackage
+        pack={item}
+        isOpen={isOpen}
+        onClose={onClose}
+        onOpenChange={onOpenChange}
+      />
+    ),
   };
 
   return (
@@ -83,7 +114,112 @@ const Actions = ({ item }: { item: PackageDto }) => {
           </DropdownItem>
         </DropdownMenu>
       </Dropdown>
+      {currKey ? modals[currKey]() : null}
     </div>
+  );
+};
+
+const AddPackage = () => {
+  const { isOpen, onClose, onOpenChange, onOpen } = useDisclosure();
+  const createPackage = useCreatePackage();
+  const { getValue, setValue, values } = useForm<PackageDto>();
+
+  const handleCreatePackage = () => {
+    createPackage.mutate(values, {
+      onSuccess: () => {
+        onClose();
+      },
+    });
+  };
+
+  return (
+    <>
+      <Button onPress={onOpen}>Добавить услугу</Button>
+      <Modal onOpenChange={onOpenChange} isOpen={isOpen}>
+        <ModalContent>
+          <ModalHeader>Новая услуга</ModalHeader>
+          <ModalBody>
+            <Input
+              value={getValue("name")}
+              onValueChange={setValue("name")}
+              label={"Название услуги"}
+            />
+            <Input
+              value={getValue("price")}
+              onValueChange={setValue("price")}
+              label={"Цена"}
+            />
+            <Input
+              value={getValue("duration")}
+              onValueChange={setValue("duration")}
+              label={"Время"}
+            />
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              isLoading={createPackage.isPending}
+              onPress={handleCreatePackage}
+              color={'primary'}
+            >
+              Добавить
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+    </>
+  );
+};
+
+const EditPackage = ({ pack, ...other }: any) => {
+  const updatePackage = useUpdatePackage();
+  const { getValue, setValue, values } = useForm<PackageDto>(pack);
+  const { onClose, onOpenChange, isOpen } = other as any;
+
+  const handleFormSubmit = () => {
+    delete values.id;
+
+    updatePackage.mutate(
+      { id: pack.id, updatee: values },
+      {
+        onSuccess: () => {
+          onClose();
+        },
+      },
+    );
+  };
+
+  return (
+    <Modal onOpenChange={onOpenChange} isOpen={isOpen}>
+      <ModalContent>
+        <ModalHeader>{pack.name}</ModalHeader>
+        <ModalBody>
+          <Input
+            value={getValue("name")}
+            onValueChange={setValue("name")}
+            label={"Название услуги"}
+          />
+          <Input
+            value={getValue("price")}
+            onValueChange={setValue("price")}
+            label={"Цена"}
+          />
+          <Input
+            value={getValue("duration")}
+            onValueChange={setValue("duration")}
+            label={"Время"}
+          />
+        </ModalBody>
+        <ModalFooter>
+          <Button
+            isLoading={updatePackage.isPending}
+            onPress={handleFormSubmit}
+            color={'primary'}
+          >
+            Редактировать
+          </Button>
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
   );
 };
 
@@ -109,8 +245,14 @@ export const PackagesTable = () => {
     }
   }, []);
 
+  const topContent = (
+    <div>
+      <AddPackage />
+    </div>
+  );
+
   return (
-    <Table>
+    <Table topContent={topContent}>
       <TableHeader>
         <TableColumn key={"id"}>ID</TableColumn>
         <TableColumn key={"name"}>Наименование</TableColumn>
