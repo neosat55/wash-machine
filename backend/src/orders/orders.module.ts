@@ -6,6 +6,7 @@ import { OrderRepository } from '../repositories/order.repository';
 import { PackageRepository } from '../repositories/package.repository';
 import { BoxRepository } from '../repositories/box.repository';
 import { BonusSystemRepository } from '../repositories/bonus-system.repository';
+import { OrdersExcel } from '../infrastructure/excel/orders.excel';
 
 @Module({
   providers: [
@@ -15,6 +16,7 @@ import { BonusSystemRepository } from '../repositories/bonus-system.repository';
     OrdersService,
     PackageRepository,
     BonusSystemRepository,
+    OrdersExcel,
   ],
   controllers: [OrdersController],
   exports: [OrderRepository, OrdersService],

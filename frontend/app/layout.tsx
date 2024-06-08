@@ -17,7 +17,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={"dark"}>
+    <html lang="en" className={"light"}>
       <body className={clsx(inter.className, "min-h-screen h-svh w-full")}>
         <BaseLayout>{children}</BaseLayout>
       </body>

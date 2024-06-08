@@ -2,6 +2,8 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as process from 'node:process';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { NestExpressApplication } from '@nestjs/platform-express';
+import { join } from 'path';
 
 try {
   process.loadEnvFile('./.env');
@@ -13,10 +15,12 @@ const PORT = process.env.PORT || 8080;
 const HOST = process.env.HOST || 'localhost';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
   app.enableCors();
   app.setGlobalPrefix('api');
+
+  app.useStaticAssets(join(__dirname, '..', 'public'));
 
   if (process.env.SWAGGER === 'true') {
     const config = new DocumentBuilder()

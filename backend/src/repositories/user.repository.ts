@@ -158,4 +158,12 @@ export class UserRepository {
       .where('user_id', '=', id)
       .executeTakeFirst();
   }
+
+  async getUsersByIds(ids: number[]) {
+    return this.client
+      .selectFrom('users')
+      .where('users.id', 'in', ids)
+      .selectAll()
+      .execute();
+  }
 }

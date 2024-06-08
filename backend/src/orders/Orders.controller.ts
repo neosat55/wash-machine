@@ -1,24 +1,19 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Param,
-  ParseIntPipe,
-  Post,
-  Put,
-  Req, Res,
-} from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseIntPipe, Post, Put, Req } from '@nestjs/common';
 import { OrdersService } from './Orders.service';
 import { IRequest, OrderStatus, Result, RolesEnum } from '../types';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { CreateOrderDto, LoadAllDto } from './entities/orders.dto';
 import { Roles } from '../infrastructure/auth/roles.decorator';
+import { OrdersExcel } from '../infrastructure/excel/orders.excel';
 
 @ApiTags('Orders')
 @Controller('order')
 @ApiBearerAuth()
 export class OrdersController {
-  constructor(private readonly ordersService: OrdersService) {}
+  constructor(
+    private readonly excelGenerator: OrdersExcel,
+    private readonly ordersService: OrdersService
+  ) {}
 
   @Post('place')
   async placeOrder(@Req() req: IRequest, @Body() body: CreateOrderDto) {
@@ -68,5 +63,11 @@ export class OrdersController {
   @Roles([RolesEnum.ADMIN])
   async loadAllWithFilters(@Req() req: IRequest, @Body() body: LoadAllDto) {
     return Result.Ok(await this.ordersService.loadAll(body));
+  }
+
+  @Post('excel')
+  @Roles([RolesEnum.ADMIN])
+  async loadExcel(@Body() body: LoadAllDto) {
+    return Result.Ok(await this.excelGenerator.exec(body));
   }
 }

@@ -24,6 +24,15 @@ export class PackageRepository {
       .executeTakeFirst();
   }
 
+  getPackagesByIds(ids: number[]) {
+    return this.client
+      .selectFrom('packages')
+      .selectAll()
+      .where('id', 'in', ids)
+      .orderBy('id', 'asc')
+      .execute();
+  }
+
   getPackages() {
     return this.client
       .selectFrom('packages')
